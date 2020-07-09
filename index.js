@@ -1,37 +1,6 @@
-const express = require("express")
-const helmet = require("helmet")
-const cors = require("cors")
-const session = require("express-session")
-const usersRouter = require("./users/users-router")
-const KnexSessionStore = require("connect-session-knex")(session)
-const db = require("./database/config")
+require("dotenv").config();
 
-const server = express()
-const port = process.env.PORT || 5000
+const server = require("./api/server.js");
 
-server.use(helmet())
-server.use(cors())
-server.use(express.json())
-server.use(session({
-	resave: false,
-	saveUninitialized: false,
-	secret: "keep it secret, keep it safe",
-	store: new KnexSessionStore({
-		 knex: db,
-		 createtable: true,
-	}),
-}))
-
-server.use(usersRouter)
-
-server.use((err, req, res, next) => {
-	console.log(err)
-	
-	res.status(500).json({
-		message: "Something went wrong",
-	})
-})
-
-server.listen(port, () => {
-	console.log(`Running at http://localhost:${port}`)
-})
+const port = process.env.PORT || 5000;
+server.listen(port, () => console.log(`\n** Running on port ${port} **\n`));
